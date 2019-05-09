@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="xunit" Version="2.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="LinkedList">
       <HintPath>..\..\Data-Structures-and-Algorithms\Data-Structures\LinkedList\LinkedList\bin\Debug\netcoreapp2.1\LinkedList.dll</HintPath>
     </Reference>

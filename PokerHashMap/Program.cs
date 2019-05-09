@@ -182,7 +182,7 @@ namespace PokerHashMap
         /// </summary>
         /// <param name="hand">Hand of cards</param>
         /// <returns>Stringified hand of cards</returns>
-        public static string StringConverter(Deck<Card> hand)
+        public static string ConvertHandToString(Deck<Card> hand)
         {
             string playerHand = "";
             foreach (Card card in hand)
@@ -336,7 +336,7 @@ namespace PokerHashMap
         {
             int handResult = -1;
             int rank;
-            string playerHand = StringConverter(hand);
+            string playerHand = ConvertHandToString(hand);
 
             int clubs = 0;
             int diamonds = 0;
@@ -418,8 +418,8 @@ namespace PokerHashMap
                 winner = 2;
             else
             {
-                string playerOneStringHand = StringConverter(playerOneHand); //Convert to string to check hand's rank in the hashtable
-                string playerTwoStringHand = StringConverter(playerTwoHand);
+                string playerOneStringHand = ConvertHandToString(playerOneHand); //Convert to string to check hand's rank in the hashtable
+                string playerTwoStringHand = ConvertHandToString(playerTwoHand);
                 if (pht.Contains(playerOneStringHand) && pht.Contains(playerTwoStringHand)) //If hand is in hashtable, check its rank
                 {
                     if (pht.Find(playerOneStringHand) < pht.Find(playerTwoStringHand))
@@ -429,22 +429,54 @@ namespace PokerHashMap
                 }
                 else
                 {
-                    for (int i = 4; i >= 0; i--) //Check for Highest Card
+                    Card playerOnePair = null;
+                    Card playerTwoPair = null;
+                    for (int i = 0; i < 4; i++) // find pairs if they exist
                     {
-                        if (playerOneHand[i].Value == playerOneHand[i - 1].Value && playerTwoHand[i].Value == playerTwoHand[i - 1].Value) //Check if both hands have a pair
-                        {
-                            i--;
-                            continue;
-                        }
-                        if (playerOneHand[i].Value > playerTwoHand[i].Value)
-                        {
+                        if (playerOneHand[i] == playerOneHand[i + 1])
+                            playerOnePair = playerOneHand[i];
+                        if (playerTwoHand[i] == playerTwoHand[i + 1])
+                            playerTwoPair = playerTwoHand[i];
+                    }
+                    if (playerOnePair != null && playerTwoPair != null)
+                    {
+                        if (playerOnePair.Value > playerTwoPair.Value)
                             winner = 1;
-                            break;
-                        }
-                        if (playerOneHand[i].Value < playerTwoHand[i].Value)
-                        {
+                        if (playerOnePair.Value < playerTwoPair.Value)
                             winner = 2;
-                            break;
+                    }
+                    if (playerOnePair == playerTwoPair || (playerOnePair == null && playerTwoPair == null))
+                    {
+                        for (int i = 4; i >= 0; i--) //Check for Highest Card
+                        {
+                            if (playerOnePair == null && playerTwoPair == null)
+                            {
+                                if (playerOneHand[i].Value > playerTwoHand[i].Value)
+                                {
+                                    winner = 1;
+                                    break;
+                                }
+                                if (playerOneHand[i].Value < playerTwoHand[i].Value)
+                                {
+                                    winner = 2;
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                if (playerOneHand[i].Value == playerOnePair.Value && playerTwoHand[i].Value == playerTwoPair.Value)
+                                    continue;
+                                if (playerOneHand[i].Value > playerTwoHand[i].Value)
+                                {
+                                    winner = 1;
+                                    break;
+                                }
+                                if (playerOneHand[i].Value < playerTwoHand[i].Value)
+                                {
+                                    winner = 2;
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
